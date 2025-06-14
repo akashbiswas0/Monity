@@ -118,57 +118,10 @@ Check for proper gas optimization patterns.
 #### `generate_migration_checklist`
 Generate a comprehensive migration checklist.
 
-## Key Optimizations Applied
 
-### 1. Network Configuration
-```typescript
-const MONAD_CONFIG = {
-  chainId: 10143,
-  rpcUrl: "https://testnet-rpc.monad.xyz",
-  gasPrice: 52000000000, // 52 gwei - hardcoded
-  baseFeePerGas: 50000000000, // 50 gwei
-  maxPriorityFeePerGas: 2000000000, // 2 gwei
-};
-```
 
-### 2. Gas Optimization
-```typescript
-// ✅ Monad Optimized
-const tx = {
-  gasLimit: 21000n, // Explicit limit
-  gasPrice: 52000000000n, // Hardcoded value
-};
 
-// ❌ Avoid on Monad
-const gasLimit = await contract.estimateGas.transfer(to, amount);
-const gasPrice = await provider.getGasPrice();
-```
 
-### 3. Batch Operations
-```typescript
-// Use Multicall3 for batch reads
-const multicall = new ethers.Contract(
-  "0xcA11bde05977b3631167028862bE2a173976CA11",
-  MULTICALL_ABI,
-  provider
-);
-
-const results = await multicall.aggregate3(calls);
-```
-
-### 4. Concurrent Transactions
-```typescript
-// Submit multiple transactions concurrently
-const txPromises = transactions.map(async (tx, index) => {
-  return await signer.sendTransaction({
-    ...tx,
-    nonce: initialNonce + index,
-    gasPrice: 52000000000n
-  });
-});
-
-const results = await Promise.all(txPromises);
-```
 
 ## Migration Best Practices
 
